@@ -1,0 +1,165 @@
+#!/usr/bin/env python
+
+"""
+@namespace ctf
+main function for CTF: Read the Json test scripts;  search the corresponding plugins to execute test instructions;
+and generate test reports.
+"""
+
+# MSC-26646-1, "Core Flight System Test Framework (CTF)"
+#
+# Copyright (c) 2019-2022 United States Government as represented by the
+# Administrator of the National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is governed by the NASA Open Source Agreement (NOSA) License and may be used,
+# distributed and modified only pursuant to the terms of that agreement.
+# See the License for the specific language governing permissions and limitations under the
+# License at https://software.nasa.gov/ .
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the
+# License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either expressed or implied.
+
+import os
+import traceback
+import sys
+from pathlib import Path
+import demjson
+from io import StringIO
+
+from lib import ctf_utility
+from lib.plugin_manager import PluginManager
+from lib.script_manager import ScriptManager
+from lib.status_manager import StatusManager, StatusDefs
+from lib.ctf_global import Global
+from lib.ctf_utility import expand_path
+from lib.logger import logger as log, set_logger_options_from_config, change_log_file
+from lib.exceptions import CtfTestError
+
+CTF_VERSION = "v1.6"
+CTF_RELEASE_DATE = "July 20 2022"
+
+
+def main():
+    """
+    main function for CTF:
+    Read the Json test scripts;  search the corresponding plugins to execute test instructions;
+    and generate test reports.
+    """
+    try:
+        args = Global.create_arg_parser().parse_args()
+        config_status = Global.load_config(args.config_file)
+        set_logger_options_from_config(Global.config)
+        change_log_file(Global.CTF_log_dir_file)
+        if config_status:
+            log.info(config_status)
+
+        # Global.time_manager will be set by CFS plugin
+        Global.time_manager = None
+
+        # Instantiate the status manager passing in the port argument
+        status_manager = StatusManager(port=args.port)
+
+        # Load plugins and determine list of commands they support.
+        log.info("cFS Test Framework ({}) Starting...".format(CTF_VERSION))
+        plugin_paths = ['plugins']
+        additional_plugins_path_str = Global.config.get("core", "additional_plugins_path", fallback="")
+        additional_plugins_path_list = additional_plugins_path_str.split(',')
+        for path in additional_plugins_path_list:
+            path = path.replace('\'', '')
+            path = path.replace('\"', '')
+            additional_plugin_path = expand_path(path.strip())
+            if additional_plugin_path:
+                plugin_paths.append(additional_plugin_path)
+        log.info("Loading Plugins... with path: {}".format(plugin_paths))
+        plugins = PluginManager(plugin_paths)
+
+        if args.pluginInfo is not None:
+            plugins.create_plugin_info(args.pluginInfo)
+            return None
+
+        # Instantiate the script manager
+        script_manager = ScriptManager(plugins, status_manager)
+
+        # Do not support JSON Scripts from script_dir argument any more
+        log.info("Reading Test Scripts...")
+
+        # Read individual scripts from scripts argument.
+        res_jsonlint = 0
+        log.info("Processing test scripts with jsonlint tool and adding them to script manager")
+        for script_file in args.scripts:
+            if os.path.isdir(script_file):
+                log.info("Found directory at {}".format(script_file))
+                for file in Path(script_file).rglob("*.json"):
+                    if jsonlint_script(file) != 0:
+                        res_jsonlint = -1
+                    script_manager.add_script_file(file)
+            else:
+                res_jsonlint = jsonlint_script(script_file)
+                script_manager.add_script_file(script_file)
+
+        if res_jsonlint != 0:
+            log.error("Finding syntax error in test scripts. Please fix the scripts before running CTF")
+            return -1
+
+        if len(script_manager.script_list) == 0:
+            log.error("No test scripts provided. Please add script path(s) to execute in the arguments.")
+            return None
+
+    except Exception as exception:
+        # Log the error and the stack trace and stop processing
+        log.error("Exception :", exc_info=True)
+        raise CtfTestError('Raise Exception from main') from exception
+
+    log.info("Completed reading in the json script file/files passed in the arguments")
+
+    cwd = os.getcwd()
+    log.info("Current working dirctory {}".format(cwd))
+    # define build-in variable
+    ctf_utility.set_variable("_CTF_EXE_DIR", "=", cwd, "string")
+
+    # Kick of scripts
+    try:
+        script_manager.run_all_scripts()
+    except (CtfTestError, Exception) as exception:
+        plugins.shutdown_plugins()
+        raise CtfTestError('Raise Exception from main') from exception
+
+    except KeyboardInterrupt as interrupt_exception:
+        log.info("Interrupt detected. Shutting down plugins...")
+        plugins.shutdown_plugins()
+        handle_exception(interrupt_exception)
+
+    return 0 if status_manager.status["status"] == StatusDefs.passed else -1
+
+
+def jsonlint_script(script):
+    lint_out = StringIO()
+    lint = demjson.jsonlint(stdout=lint_out)
+    return_code = lint.main(['-s', '{}'.format(script)])
+
+    if return_code != 0:
+        content_std_out = lint_out.getvalue()
+        log.error("jsonlint output: {}".format(content_std_out))
+        lint_out.close()
+
+    return return_code
+
+
+def handle_exception(passed_exception):
+    """
+    Exception handler: log exception and exit -1
+    """
+    code = -1
+    log.error(traceback.format_exc())
+    log.info("CTF Exiting with exit code {}".format(code))
+    log.debug(passed_exception)
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    try:
+        exit_code = main()
+        sys.exit(exit_code)
+    except (KeyboardInterrupt, CtfTestError) as exception:
+        handle_exception(exception)

@@ -1,0 +1,143 @@
+{
+    "test_script_number": "CFS-CI-Functions-Test",
+    "test_script_name": "CiFunctionTests.json",
+    "requirements": {
+        "MyRequirement": "N/A"
+    },
+    "description": "Example script showing CI function usage",
+    "owner": "CTF",
+    "test_setup": "",
+    "ctf_options": {
+        "verify_timeout": 4
+    },
+    "import": {
+        "../libs/CiFunctions.json": [
+            "SendCheckCiResetCmd",
+            "SendCheckCiEnableToCmd",
+            "SendCheckCiNoopCmd"
+        ]
+    },
+    "functions": {
+        "SendShellCommand": {
+            "description": "No description",
+            "varlist": [
+                "instruction",
+                "output_file",
+                "expected_cmd_cnt",
+                "expected_err_cnt"
+            ],
+            "instructions": [
+                {
+                    "instruction": "SendCfsCommand",
+                    "data": {
+                        "mid": "CFE_ES_CMD_MID",
+                        "cc": "CFE_ES_SHELL_CC",
+                        "args": {
+                            "Payload": {
+                                "CmdString": "instruction",
+                                "OutputFilename": "output_file"
+                            }
+                        },
+                        "target": ""
+                    },
+                    "wait": 1
+                },
+                {
+                    "instruction": "CheckTlmValue",
+                    "data": {
+                        "mid": "CFE_ES_HK_TLM_MID",
+                        "args": [
+                            {
+                                "variable": "Payload.CommandCounter",
+                                "value": [
+                                    "expected_cmd_cnt"
+                                ],
+                                "compare": "=="
+                            },
+                            {
+                                "variable": "Payload.CommandErrorCounter",
+                                "value": [
+                                    "expected_err_cnt"
+                                ],
+                                "compare": "=="
+                            }
+                        ],
+                        "target": ""
+                    },
+                    "wait": 1
+                }
+            ]
+        }
+    },
+    "tests": [
+        {
+            "test_number": "CI-Function-Test-1",
+            "description": "Test CI Enable TO command",
+            "instructions": [
+                {
+                    "instruction": "StartCfs",
+                    "data": {
+                        "target": ""
+                    },
+                    "wait": 1
+                },
+                {
+                    "function": "SendCheckCiEnableToCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 1,
+                        "expectedErrCnt": 0,
+                        "destIp": "127.0.0.1",
+                        "destPort": 5011,
+                        "routeMask": 0,
+                        "fileDesc": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "CI-Function-Test-2",
+            "description": "Test CI NOOP command",
+            "instructions": [
+                {
+                    "function": "SendCheckCiNoopCmd",
+                    "wait": 5,
+                    "params": {
+                        "expectedCmdCnt": 2,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "CI-Function-Test-3",
+            "description": "Test CI Reset command",
+            "instructions": [
+                {
+                    "function": "SendCheckCiResetCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "Shell-Function-Test-1",
+            "description": "No description",
+            "instructions": [
+                {
+                    "function": "SendShellCommand",
+                    "params": {
+                        "instruction": "hostname",
+                        "output_file": "/cf/test_output.txt",
+                        "expected_cmd_cnt": 0,
+                        "expected_err_cnt": 1
+                    },
+                    "wait": 1
+                }
+            ]
+        }
+    ]
+}

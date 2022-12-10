@@ -1,0 +1,143 @@
+{
+    "test_script_number": "CFE-ES-Functions-Test",
+    "test_script_name": "CfeEsTest.json",
+    "requirements": {
+        "MyRequirement": "N/A"
+    },
+    "description": "Example script showing ES function usage",
+    "owner": "CTF",
+    "test_setup": "",
+    "ctf_options": {
+        "verify_timeout": 4
+    },
+    "import": {
+        "../libs/CfeEsFunctions.json": [
+            "SendCheckCfeEsNoopCmd",
+            "SendCheckCfeEsResetCounterCmd",
+            "SendCheckCfeEsRestartCmd",
+            "SendCheckCfeEsStartAppCmd",
+            "SendCheckCfeEsShellCmd",
+            "SendCheckCfeEsStopAppCmd",
+            "SendCheckCfeEsRestartAppCmd",
+            "SendCheckCfeEsReloadAppCmd",
+            "SendCheckCfeEsQueryOneAppCmd",
+            "SendCheckCfeEsQueryAllAppCmd",
+            "SendCheckCfeEsClearSyslogAppCmd",
+            "SendCheckCfeEsWriteSyslogAppCmd",
+            "SendCheckCfeEsClearErLogAppCmd",
+            "SendCheckCfeEsWriteErLogAppCmd",
+            "SendCheckCfeEsStartPerfDataAppCmd",
+            "SendCheckCfeEsStopPerfDataAppCmd",
+            "SendCheckCfeEsSetPerfFilterMaskAppCmd",
+            "SendCheckCfeEsSetPerfTriggerMaskAppCmd",
+            "SendCheckCfeEsOverwriteSyslogAppCmd",
+            "SendCheckCfeEsResetPrCountAppCmd",
+            "SendCheckCfeEsSetMaxPrCountAppCmd",
+            "SendCheckCfeEsDeleteCdsAppCmd",
+            "SendCheckCfeSendMemPoolStatsAppCmd",
+            "SendCheckCfeQueryAllTasksAppCmd",
+            "SendCheckCfeDumpCdsRegistryAppCmd"
+        ]
+    },
+    "functions": {},
+    "tests": [
+        {
+            "test_number": "CFE-ES-Functions-Test-1",
+            "description": "Start CFS, Send TO NOOP command",
+            "instructions": [
+                {
+                    "instruction": "StartCfs",
+                    "wait": 1,
+                    "data": {
+                        "target": ""
+                    }
+                },
+                {
+                    "instruction": "EnableCfsOutput",
+                    "wait": 1,
+                    "data": {
+                        "target": ""
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsNoopCmd",
+                    "wait": 5,
+                    "params": {
+                        "expectedCmdCnt": 1,
+                        "expectedErrCnt": 0
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsResetCounterCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 0
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsRestartCmd",
+                    "wait": 1,
+                    "description": "Testing Off Nominal Case, CFS Outputs Invalid Restart Type",
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 1,
+                        "restartType": 0
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsShellCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 2,
+                        "cmdString": "pwd",
+                        "outputFile": "CfeEsTest_SendCheckCfeEsShellCmd_Output.txt"
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsStartPerfDataAppCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 1,
+                        "expectedErrCnt": 2,
+                        "triggerMode": 0
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsStopPerfDataAppCmd",
+                    "wait": 1,
+                    "description": "Nominal case - filename length < 64",
+                    "params": {
+                        "expectedCmdCnt": 2,
+                        "expectedErrCnt": 2,
+                        "fileName": "CfeEsTest_SendCheckCfeEsStopPerfDataAppCmd_Output.txt"
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsStartAppCmd",
+                    "wait": 1,
+                    "description": "Off-nominal Case due to mismatch between fileName size on CFS vs JSON",
+                    "params": {
+                        "expectedCmdCnt": 2,
+                        "expectedErrCnt": 3,
+                        "app": "SOME_APP",
+                        "entryPoint": "SOME_ENTRY",
+                        "fileName": "SOME_FILENAME",
+                        "stackSize": 12345,
+                        "exceptionAction": 0,
+                        "priority": 0
+                    }
+                },
+                {
+                    "function": "SendCheckCfeEsResetCounterCmd",
+                    "wait": 10,
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

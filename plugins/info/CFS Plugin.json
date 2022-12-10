@@ -1,0 +1,313 @@
+{
+  "group_name": "CFS Plugin",
+  "instructions": [
+    {
+      "name": "RegisterCfs",
+      "description": "",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "BuildCfs",
+      "description": "",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "StartCfs",
+      "description": "",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "run_args",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "EnableCfsOutput",
+      "description": "",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "SendCfsCommand",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "cmd_mid"
+        },
+        {
+          "name": "cc",
+          "description": "",
+          "type": "cmd_code"
+        },
+        {
+          "name": "args",
+          "description": "",
+          "type": "cmd_arg",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "header",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "SendCfsCommandWithPayloadLength",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "cmd_mid"
+        },
+        {
+          "name": "cc",
+          "description": "",
+          "type": "cmd_code"
+        },
+        {
+          "name": "args",
+          "description": "",
+          "type": "cmd_arg",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "header",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "payload_length",
+          "description": "",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "SendCfsCommandWithRawPayload",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "cmd_mid"
+        },
+        {
+          "name": "cc",
+          "description": "",
+          "type": "cmd_code"
+        },
+        {
+          "name": "hex_buffer",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "header",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckTlmValue",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "tlm_mid"
+        },
+        {
+          "name": "args",
+          "description": "",
+          "type": "comparison",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckTlmPacket",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "tlm_mid"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckNoTlmPacket",
+      "description": "",
+      "parameters": [
+        {
+          "name": "mid",
+          "description": "",
+          "type": "tlm_mid"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckTlmContinuous",
+      "description": "",
+      "parameters": [
+        {
+          "name": "verification_id",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "mid",
+          "description": "",
+          "type": "tlm_mid"
+        },
+        {
+          "name": "args",
+          "description": "",
+          "type": "comparison",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "RemoveCheckTlmContinuous",
+      "description": "",
+      "parameters": [
+        {
+          "name": "verification_id",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckEvent",
+      "description": "",
+      "parameters": [
+        {
+          "name": "args",
+          "description": "",
+          "type": "event",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CheckNoEvent",
+      "description": "",
+      "parameters": [
+        {
+          "name": "args",
+          "description": "",
+          "type": "event",
+          "isArray": true
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "ArchiveCfsFiles",
+      "description": "",
+      "parameters": [
+        {
+          "name": "source_path",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "ShutdownCfs",
+      "description": "",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "description": "Provide CFS command/telemetry support for CTF"
+}

@@ -1,0 +1,102 @@
+{
+  "group_name": "ValidationPlugin",
+  "instructions": [
+    {
+      "name": "DeleteFiles",
+      "description": "",
+      "parameters": [
+        {
+          "name": "path",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CopyFiles",
+      "description": "",
+      "parameters": [
+        {
+          "name": "source",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "destination",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "SaveFileAsText",
+      "description": "",
+      "parameters": [
+        {
+          "name": "input_file",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "output_file",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "file_type",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "target",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "SearchStr",
+      "description": "",
+      "parameters": [
+        {
+          "name": "file",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "search_str",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "SearchNoStr",
+      "description": "",
+      "parameters": [
+        {
+          "name": "file",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "name": "search_str",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "InsertUserComment",
+      "description": "",
+      "parameters": [
+        {
+          "name": "comment",
+          "description": "",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "description": "CTF Validation Plugin"
+}

@@ -1,0 +1,133 @@
+{
+    "test_script_number": "CFS-TO-Functions-Test",
+    "test_script_name": "ToFunctionTests.json",
+    "requirements": {
+        "MyRequirement": "N/A"
+    },
+    "description": "Example script showing TO function usage",
+    "owner": "CTF",
+    "test_setup": "",
+    "ctf_options": {
+        "verify_timeout": 4
+    },
+    "import": {
+        "../libs/ToFunctions.json": [
+            "SendCheckToNoopCmd",
+            "SendCheckToResetCmd",
+            "SendCheckToEnableOutputCmd",
+            "SendToPauseOutputCmd",
+            "SendCheckToResumeOutputCmd",
+            "SendCheckToDisableOutputCmd",
+            "SendCheckToAddTblEntryCmd",
+            "SendCheckToRemoveTblEntryCmd",
+            "SendCheckToDisableTblEntryCmd",
+            "SendCheckToEnableTblEntryCmd",
+            "SendCheckToEnableGroupCmd",
+            "SendCheckToEnableAllCmd",
+            "SendCheckToDisableGroupCmd",
+            "SendCheckToDisableAllCmd",
+            "SendCheckToSetRouteByMidCmd",
+            "SendCheckToSetRouteByGroupCmd",
+            "SendCheckToManageTableCmd",
+            "SendCheckToActivateRoutesCmd",
+            "SendCheckToDeactivateRoutesCmd",
+            "SendCheckToSetRoutePeriodCmd",
+            "SendCheckToSetWakeupTimeoutCmd",
+            "SendCheckToSendDataTypeCmd"
+        ]
+    },
+    "functions": {},
+    "tests": [
+        {
+            "test_number": "TO-Function-Test-1",
+            "description": "Start CFS, enable CFS output",
+            "instructions": [
+                {
+                    "instruction": "StartCfs",
+                    "wait": 1,
+                    "data": {
+                        "target": ""
+                    }
+                },
+                {
+                    "instruction": "EnableCfsOutput",
+                    "wait": 1,
+                    "data": {
+                        "target": ""
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "TO-Function-Test-2",
+            "description": "Test TO NOOP command",
+            "instructions": [
+                {
+                    "function": "SendCheckToNoopCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 2,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "TO-Function-Test-3",
+            "description": "Test TO RESET command",
+            "instructions": [
+                {
+                    "function": "SendCheckToResetCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 0,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "TO-Function-Test-4",
+            "description": "Test TO ENABLE OUTPUT command",
+            "instructions": [
+                {
+                    "function": "SendCheckToEnableOutputCmd",
+                    "wait": 1,
+                    "params": {
+                        "expectedCmdCnt": 1,
+                        "expectedErrCnt": 0,
+                        "destIp": "127.0.0.1",
+                        "destPort": 5011,
+                        "routeMask": 0,
+                        "fileDesc": 0
+                    }
+                }
+            ]
+        },
+        {
+            "test_number": "TO-Function-Test-5",
+            "description": "Test TO PAUSE OUTPUT command",
+            "instructions": [
+                {
+                    "function": "SendToPauseOutputCmd",
+                    "wait": 5,
+                    "params": {}
+                }
+            ]
+        },
+        {
+            "test_number": "TO-Function-Test-6",
+            "description": "Test TO RESUME OUTPUT command",
+            "instructions": [
+                {
+                    "function": "SendCheckToResumeOutputCmd",
+                    "wait": 2,
+                    "params": {
+                        "expectedCmdCnt": 3,
+                        "expectedErrCnt": 0
+                    }
+                }
+            ]
+        }
+    ]
+}
